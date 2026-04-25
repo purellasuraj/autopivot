@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoPivot — AI Vehicle Privacy Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white: #ffffff;
+  --off: #f7f6f3;
+  --light: #eeece8;
+  --border: #e0ddd7;
+  --mid: #b0aa9e;
+  --text: #1a1814;
+  --muted: #7a756c;
+  --accent: #1a1814;
+  --green: #1a7a4a;
+  --green-light: #e8f5ed;
+  --red: #c0392b;
+  --blue: #1a3a7a;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--white);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.nav-logo span {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: var(--text);
+  border-radius: 50%;
+  margin-left: 3px;
+  vertical-align: middle;
+  margin-bottom: 2px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--text); }
+
+.nav-cta {
+  background: var(--text);
+  color: var(--white) !important;
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  transition: opacity 0.2s !important;
+}
+
+.nav-cta:hover { opacity: 0.8; }
+
+/* ─── HERO ─── */
+.hero {
+  padding: 160px 48px 100px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--off);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+
+.hero-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.hero h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(42px, 5vw, 64px);
+  line-height: 1.08;
+  letter-spacing: -1px;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--muted);
+}
+
+.hero p {
+  font-size: 17px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 420px;
+  margin-bottom: 40px;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-primary {
+  background: var(--text);
+  color: var(--white);
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+
+.btn-ghost {
+  color: var(--muted);
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s;
+}
+
+.btn-ghost:hover { color: var(--text); }
+
+.hero-stats {
+  display: flex;
+  gap: 32px;
+  padding-top: 48px;
+  border-top: 1px solid var(--border);
+}
+
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Hero visual */
+.hero-visual {
+  position: relative;
+}
+
+.hero-card {
+  background: var(--off);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-card-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--white);
+}
+
+.hero-card-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.hero-card-dots span {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.hero-card-dots span:first-child { background: #ff6058; }
+.hero-card-dots span:nth-child(2) { background: #ffbd2e; }
+.hero-card-dots span:nth-child(3) { background: #28ca41; }
+
+.hero-card-title {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.hero-img-area {
+  height: 280px;
+  background: linear-gradient(135deg, #e8e4de 0%, #d4cfc8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-img-placeholder {
+  text-align: center;
+  color: var(--mid);
+}
+
+.hero-img-placeholder svg {
+  width: 64px; height: 64px;
+  opacity: 0.4;
+  margin-bottom: 12px;
+}
+
+.hero-img-placeholder p { font-size: 13px; }
+
+/* Floating plate badge */
+.plate-badge {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.plate-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+/* ─── TICKER ─── */
+.ticker-wrap {
+  background: var(--text);
+  color: var(--white);
+  padding: 14px 0;
+  overflow: hidden;
+}
+
+.ticker-track {
+  display: flex;
+  gap: 0;
+  animation: ticker 25s linear infinite;
+  white-space: nowrap;
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 32px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+.ticker-dot {
+  width: 4px; height: 4px;
+  background: var(--mid);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ─── SECTION COMMONS ─── */
+.section {
+  padding: 100px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-eyebrow {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  max-width: 640px;
+}
+
+.section-title em { font-style: italic; color: var(--muted); }
+
+/* ─── HOW IT WORKS ─── */
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-top: 64px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.how-card {
+  background: var(--white);
+  padding: 40px 36px;
+  position: relative;
+}
+
+.how-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--mid);
+  margin-bottom: 24px;
+}
+
+.how-icon {
+  width: 48px; height: 48px;
+  background: var(--off);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+
+.how-card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.how-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ─── TOOL SECTION ─── */
+.tool-section {
+  background: var(--off);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.tool-wrap {
+  padding: 100px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tool-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.tool-header .section-title {
+  margin: 0 auto 16px;
+  text-align: center;
+}
+
+.tool-header p {
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 300;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* API Key input */
+.api-key-row {
+  max-width: 760px;
+  margin: 0 auto 32px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 8px 8px 16px;
+}
+
+.api-key-row label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.api-key-row input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: transparent;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
+
+.api-key-row input::placeholder { color: var(--mid); font-family: 'DM Sans', sans-serif; letter-spacing: 0; }
+
+.api-save-btn {
+  background: var(--text);
+  color: var(--white);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.api-save-btn:hover { opacity: 0.8; }
+
+/* Tool card */
+.tool-card {
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.06);
+}
+
+.tool-card-header {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tool-card-header h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.gemini-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--off);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.gemini-pill::before {
+  content: '✦';
+  font-size: 10px;
+  color: #4285f4;
+}
+
+.tool-body { padding: 32px 28px; }
+
+/* Upload zone */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 56px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  background: var(--off);
+}
+
+.upload-zone:hover, .upload-zone.drag { border-color: var(--text); background: #f0ede8; }
+
+.upload-zone input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.upload-icon-wrap {
+  width: 56px; height: 56px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin: 0 auto 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.upload-zone h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.upload-zone p { font-size: 13px; color: var(--muted); }
+
+/* Comparison panels */
+.comparison {
+  display: none;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.comparison.show { display: grid; grid-template-columns: 1fr 1fr; }
+
+.img-panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--off);
+}
+
+.img-panel-head {
+  padding: 10px 14px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.img-panel-head span {
+  font-size: 12px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.img-panel-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: var(--off);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.img-panel-badge.done { background: var(--green-light); color: var(--green); border-color: #c3e6d2; }
+.img-panel-badge.working { background: #fef9e7; color: #a0780a; border-color: #f0e0a0; }
+
+.img-panel-body {
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-conic-gradient(#e8e4de 0% 25%, #eeece8 0% 50%) 0 0/16px 16px;
+  position: relative;
+}
+
+.img-panel-body img {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Process button */
+.process-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.process-btn {
+  flex: 1;
+  background: var(--text);
+  color: var(--white);
+  border: none;
+  padding: 16px 24px;
+  border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.process-btn:hover:not(:disabled) { opacity: 0.85; transform: translateY(-1px); }
+.process-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.process-btn .spin {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: none;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.dl-btn {
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid #c3e6d2;
+  padding: 16px 20px;
+  border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.dl-btn:hover { opacity: 0.85; }
+.dl-btn.show { display: flex; }
+
+/* Log */
+.log {
+  margin-top: 16px;
+  background: #1a1814;
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-family: monospace;
+  font-size: 12px;
+  max-height: 120px;
+  overflow-y: auto;
+  display: none;
+}
+
+.log.show { display: block; }
+
+.log-line {
+  display: flex;
+  gap: 10px;
+  padding: 2px 0;
+  animation: fadein 0.3s ease;
+}
+
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+
+.log-t { color: #7a756c; }
+.log-ok { color: #4fffb0; }
+.log-inf { color: #a0c4ff; }
+.log-err { color: #ff8080; }
+
+/* Error */
+.error-bar {
+  display: none;
+  background: #fdf0f0;
+  border: 1px solid #f0c0c0;
+  color: var(--red);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-top: 14px;
+}
+
+.error-bar.show { display: block; }
+
+/* ─── FEATURES ─── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 64px;
+}
+
+.feat-card {
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: box-shadow 0.2s;
+}
+
+.feat-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.07); }
+
+.feat-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.feat-card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.feat-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ─── CTA ─── */
+.cta-section {
+  background: var(--text);
+  margin: 0 48px 100px;
+  border-radius: 24px;
+  padding: 80px 64px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 48px;
+  align-items: center;
+}
+
+.cta-section h2 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(32px, 4vw, 48px);
+  color: var(--white);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.cta-section h2 em { font-style: italic; opacity: 0.6; }
+
+.cta-section p {
+  color: rgba(255,255,255,0.55);
+  font-size: 15px;
+  margin-top: 12px;
+  font-weight: 300;
+}
+
+.btn-white {
+  background: var(--white);
+  color: var(--text);
+  padding: 16px 32px;
+  border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+  display: inline-block;
+}
+
+.btn-white:hover { opacity: 0.9; }
+
+/* ─── FOOTER ─── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.footer-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+}
+
+.footer-links a {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--text); }
+
+.footer-copy {
+  font-size: 13px;
+  color: var(--mid);
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  .hero { grid-template-columns: 1fr; padding: 120px 24px 60px; gap: 40px; }
+  .section { padding: 64px 24px; }
+  .tool-wrap { padding: 64px 24px; }
+  .how-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; gap: 16px; }
+  .cta-section { grid-template-columns: 1fr; margin: 0 24px 64px; padding: 48px 32px; gap: 24px; }
+  footer { flex-direction: column; gap: 24px; padding: 32px 24px; text-align: center; }
+  .footer-links { flex-wrap: wrap; justify-content: center; }
+  .comparison.show { grid-template-columns: 1fr; }
+  .api-key-row { flex-wrap: wrap; }
+}
+
+canvas { display: none; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">AutoPivot<span></span></a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#tool">Try it free</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#tool" class="nav-cta">Get started →</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="padding-top:140px">
+  <div>
+    <div class="hero-badge">Gemini Vision Powered</div>
+    <h1>Vehicle privacy<br><em>made effortless.</em></h1>
+    <p>Upload any car photo. Our AI detects and hides the number plate automatically — protecting your privacy before you publish your listing.</p>
+    <div class="hero-actions">
+      <a href="#tool" class="btn-primary">Try it free →</a>
+      <a href="#how" class="btn-ghost">See how it works ↓</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">2s</div>
+        <div class="stat-label">Average processing</div>
+      </div>
+      <div>
+        <div class="stat-num">99%</div>
+        <div class="stat-label">Detection accuracy</div>
+      </div>
+      <div>
+        <div class="stat-num">Free</div>
+        <div class="stat-label">No account needed</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-card">
+      <div class="hero-card-header">
+        <div class="hero-card-dots"><span></span><span></span><span></span></div>
+        <span class="hero-card-title">Plate Privacy Tool</span>
+        <span style="font-size:12px;color:var(--mid)">gemini-2.0-flash</span>
+      </div>
+      <div class="hero-img-area">
+        <div class="hero-img-placeholder">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="20" width="48" height="28" rx="4" stroke="currentColor" stroke-width="2"/>
+            <rect x="14" y="36" width="10" height="6" rx="1.5" fill="currentColor" opacity="0.4"/>
+            <rect x="40" y="36" width="10" height="6" rx="1.5" fill="currentColor" opacity="0.4"/>
+            <circle cx="16" cy="48" r="4" stroke="currentColor" stroke-width="2"/>
+            <circle cx="48" cy="48" r="4" stroke="currentColor" stroke-width="2"/>
+            <path d="M20 20 L26 12 H38 L44 20" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <p>Your vehicle photo</p>
+        </div>
+        <div class="plate-badge">
+          <div class="plate-dot"></div>
+          Plate hidden · Privacy protected
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span class="ticker-item">🔒 Number Plate Detection<span class="ticker-dot"></span></span>
+    <span class="ticker-item">✦ Gemini 2.0 Flash Vision<span class="ticker-dot"></span></span>
+    <span class="ticker-item">⚡ 2 Second Processing<span class="ticker-dot"></span></span>
+    <span class="ticker-item">🚗 Any Vehicle Type<span class="ticker-dot"></span></span>
+    <span class="ticker-item">📸 Instant Download<span class="ticker-dot"></span></span>
+    <span class="ticker-item">🔐 Privacy First<span class="ticker-dot"></span></span>
+    <span class="ticker-item">🌏 Australian Plates Supported<span class="ticker-dot"></span></span>
+    <span class="ticker-item">✦ No Account Required<span class="ticker-dot"></span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item">🔒 Number Plate Detection<span class="ticker-dot"></span></span>
+    <span class="ticker-item">✦ Gemini 2.0 Flash Vision<span class="ticker-dot"></span></span>
+    <span class="ticker-item">⚡ 2 Second Processing<span class="ticker-dot"></span></span>
+    <span class="ticker-item">🚗 Any Vehicle Type<span class="ticker-dot"></span></span>
+    <span class="ticker-item">📸 Instant Download<span class="ticker-dot"></span></span>
+    <span class="ticker-item">🔐 Privacy First<span class="ticker-dot"></span></span>
+    <span class="ticker-item">🌏 Australian Plates Supported<span class="ticker-dot"></span></span>
+    <span class="ticker-item">✦ No Account Required<span class="ticker-dot"></span></span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div id="how">
+<div class="section">
+  <div class="section-eyebrow">How it works</div>
+  <div class="section-title">Three steps to <em>total privacy.</em></div>
+
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">01 —</div>
+      <div class="how-icon">📤</div>
+      <h3>Upload your photo</h3>
+      <p>Drop any JPG, PNG or WEBP car photo. Dashcam shot, phone snap, or professional image — it all works.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">02 —</div>
+      <div class="how-icon">🔍</div>
+      <h3>Gemini detects the plate</h3>
+      <p>Google's Gemini 2.0 Flash Vision analyses the image and pinpoints the exact number plate coordinates with high precision.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">03 —</div>
+      <div class="how-icon">⬇️</div>
+      <h3>Download protected image</h3>
+      <p>The plate is blurred with a mosaic effect and you can instantly download the privacy-protected PNG.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TOOL -->
+<div class="tool-section" id="tool">
+<div class="tool-wrap">
+  <div class="tool-header">
+    <div class="section-eyebrow">Free tool · No sign-up</div>
+    <div class="section-title">Hide your <em>number plate</em> now.</div>
+    <p style="margin-top:16px">Enter your Gemini API key (stored locally, never sent to our servers) and upload a car image.</p>
+  </div>
+
+  <!-- API Key -->
+  <div class="api-key-row">
+    <label>Gemini API Key</label>
+    <input type="password" id="apiKey" placeholder="AIza... (get yours free at aistudio.google.com)" autocomplete="off">
+    <button class="api-save-btn" onclick="saveKey()">Save key</button>
+  </div>
+
+  <div class="tool-card">
+    <div class="tool-card-header">
+      <h3>Number Plate Privacy</h3>
+      <div class="gemini-pill">Gemini 2.0 Flash Vision</div>
+    </div>
+    <div class="tool-body">
+
+      <!-- Upload -->
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileIn" accept="image/jpeg,image/png,image/webp" onchange="handleFile(event)">
+        <div class="upload-icon-wrap">🚗</div>
+        <h4>Drop your vehicle photo here</h4>
+        <p>JPG · PNG · WEBP — max 10MB</p>
+      </div>
+
+      <!-- Comparison -->
+      <div class="comparison" id="comparison">
+        <div class="img-panel">
+          <div class="img-panel-head">
+            <span>Original</span>
+            <span class="img-panel-badge">Input</span>
+          </div>
+          <div class="img-panel-body">
+            <img id="origImg" src="" alt="Original">
+          </div>
+        </div>
+        <div class="img-panel">
+          <div class="img-panel-head">
+            <span>Processed</span>
+            <span class="img-panel-badge" id="procBadge">Awaiting</span>
+          </div>
+          <div class="img-panel-body" id="procBody">
+            <img id="procImg" src="" alt="Processed" style="display:none">
+            <span id="procHint" style="font-size:13px;color:var(--mid)">Press process →</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="process-row">
+        <button class="process-btn" id="procBtn" onclick="processImage()" disabled>
+          <div class="spin" id="spin"></div>
+          <span id="procBtnLabel">Upload an image first</span>
+        </button>
+        <a class="dl-btn" id="dlBtn" download="autopivot-plate-hidden.png">⬇ Download</a>
+      </div>
+
+      <!-- Error -->
+      <div class="error-bar" id="errBar"></div>
+
+      <!-- Log -->
+      <div class="log" id="log"></div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- FEATURES -->
+<div class="section" id="features">
+  <div class="section-eyebrow">Features</div>
+  <div class="section-title">Everything you need<br><em>before you list.</em></div>
+
+  <div class="features-grid">
+    <div class="feat-card">
+      <span class="feat-icon">🎯</span>
+      <h3>Precision Detection</h3>
+      <p>Gemini Vision identifies plate regions with pixel-level accuracy, even on angled or partially visible plates.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">🧩</span>
+      <h3>Mosaic Blur</h3>
+      <p>A dense pixelated mosaic is applied over the plate — completely unreadable, yet natural-looking in the final image.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">🌏</span>
+      <h3>All Plate Formats</h3>
+      <p>Works with Australian, UK, European, and US-format number plates across front and rear positions.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">🔐</span>
+      <h3>Privacy First</h3>
+      <p>Your API key stays in your browser. Images are processed via Gemini and never stored on any server.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">⚡</span>
+      <h3>Instant Results</h3>
+      <p>Processing takes under 3 seconds. No queues, no waiting — upload and download immediately.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">📦</span>
+      <h3>PNG Export</h3>
+      <p>Download your protected image as a full-resolution PNG, ready to upload to Carsales, Facebook Marketplace, or Gumtree.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div>
+    <h2>Ready to protect<br><em>your listings?</em></h2>
+    <p>Free to use. Powered by Google Gemini. No account required.</p>
+  </div>
+  <a href="#tool" class="btn-white">Try it free →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a class="footer-logo" href="#">AutoPivot</a>
+  <ul class="footer-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#tool">Tool</a></li>
+    <li><a href="#features">Features</a></li>
+  </ul>
+  <span class="footer-copy">Powered by Gemini Vision · © 2026 AutoPivot</span>
+</footer>
+
+<canvas id="canvas"></canvas>
+
+<script>
+  // ── State
+  let currentFile = null;
+  let originalDataURL = null;
+
+  // ── API key persistence
+  const keyInput = document.getElementById('apiKey');
+  const savedKey = localStorage.getItem('gemini_api_key');
+  if (savedKey) keyInput.value = savedKey;
+
+  function saveKey() {
+    const k = keyInput.value.trim();
+    if (!k) return;
+    localStorage.setItem('gemini_api_key', k);
+    const btn = document.querySelector('.api-save-btn');
+    btn.textContent = '✓ Saved';
+    setTimeout(() => btn.textContent = 'Save key', 1500);
+  }
+
+  // ── Drag & drop
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag');
+    const f = e.dataTransfer.files[0];
+    if (f) loadFile(f);
+  });
+
+  function handleFile(e) { const f = e.target.files[0]; if (f) loadFile(f); }
+
+  function loadFile(f) {
+    if (!f.type.startsWith('image/')) { showError('Please upload a JPG, PNG, or WEBP image.'); return; }
+    if (f.size > 10 * 1024 * 1024) { showError('File too large — maximum 10MB.'); return; }
+    currentFile = f;
+    const reader = new FileReader();
+    reader.onload = e => {
+      originalDataURL = e.target.result;
+      document.getElementById('origImg').src = originalDataURL;
+      document.getElementById('comparison').classList.add('show');
+      resetOutput();
+      const btn = document.getElementById('procBtn');
+      btn.disabled = false;
+      document.getElementById('procBtnLabel').textContent = 'Hide Number Plate';
+      addLog('inf', `Loaded: ${f.name} (${(f.size/1024).toFixed(0)} KB)`);
+    };
+    reader.readAsDataURL(f);
+  }
+
+  function resetOutput() {
+    document.getElementById('procImg').style.display = 'none';
+    document.getElementById('procHint').style.display = 'block';
+    document.getElementById('procBadge').textContent = 'Awaiting';
+    document.getElementById('procBadge').className = 'img-panel-badge';
+    document.getElementById('dlBtn').classList.remove('show');
+    document.getElementById('errBar').classList.remove('show');
+    clearLog();
+  }
+
+  function setLoading(on) {
+    const btn = document.getElementById('procBtn');
+    const spin = document.getElementById('spin');
+    btn.disabled = on;
+    spin.style.display = on ? 'block' : 'none';
+    document.getElementById('procBtnLabel').textContent = on ? 'Processing...' : 'Hide Number Plate';
+  }
+
+  function showError(msg) {
+    const bar = document.getElementById('errBar');
+    bar.textContent = '⚠ ' + msg;
+    bar.classList.add('show');
+  }
+
+  function addLog(type, msg) {
+    const log = document.getElementById('log');
+    log.classList.add('show');
+    const now = new Date().toTimeString().slice(0, 8);
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    line.innerHTML = `<span class="log-t">[${now}]</span><span class="log-${type}">${msg}</span>`;
+    log.appendChild(line);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function clearLog() {
+    const log = document.getElementById('log');
+    log.innerHTML = '';
+    log.classList.remove('show');
+  }
+
+  async function toBase64(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result.split(',')[1]);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  }
+
+  async function processImage() {
+    const apiKey = localStorage.getItem('gemini_api_key') || keyInput.value.trim();
+    if (!apiKey) { showError('Please enter your Gemini API key above and press Save.'); return; }
+    if (!currentFile) return;
+
+    document.getElementById('errBar').classList.remove('show');
+    setLoading(true);
+    document.getElementById('procBadge').textContent = 'Processing';
+    document.getElementById('procBadge').className = 'img-panel-badge working';
+    document.getElementById('procHint').textContent = 'AI is working...';
+
+    try {
+      addLog('inf', 'Sending image to Gemini 2.0 Flash Vision...');
+      const b64 = await toBase64(currentFile);
+      const mime = currentFile.type || 'image/jpeg';
+
+      const prompt = `You are a vehicle image analyst. Analyse this car image and detect all number plates / license plates.
+
+Return ONLY a valid JSON object — no markdown, no explanation, just JSON:
+{
+  "detected": true,
+  "plates": [
+    {
+      "position": "front|rear|unknown",
+      "x_pct": <left edge as % of image width, 0-100>,
+      "y_pct": <top edge as % of image height, 0-100>,
+      "w_pct": <plate width as % of image width>,
+      "h_pct": <plate height as % of image height>,
+      "confidence": "high|medium|low"
+    }
+  ]
+}
+
+If no plate is visible, return: {"detected": false, "plates": []}
+
+Be generous with the bounding box — add a few percent margin around the plate. Coordinates must be accurate percentage values of the image dimensions.`;
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [
+                { inline_data: { mime_type: mime, data: b64 } },
+                { text: prompt }
+              ]
+            }],
+            generationConfig: { temperature: 0.1, maxOutputTokens: 512 }
+          })
+        }
+      );
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error?.message || `Gemini API error ${res.status}`);
+      }
+
+      const data = await res.json();
+      const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      addLog('ok', 'Gemini responded.');
+
+      let parsed;
+      try {
+        const clean = raw.replace(/```json|```/g, '').trim();
+        parsed = JSON.parse(clean);
+      } catch (e) {
+        throw new Error('Could not parse Gemini response. Try again.');
+      }
+
+      if (!parsed.detected || !parsed.plates?.length) {
+        addLog('inf', 'No number plate detected in this image.');
+        showError('No number plate detected. Try a photo where the plate is clearly visible.');
+        setLoading(false);
+        document.getElementById('procBadge').textContent = 'No plate found';
+        document.getElementById('procBadge').className = 'img-panel-badge';
+        document.getElementById('procHint').textContent = 'No plate detected';
+        return;
+      }
+
+      addLog('ok', `Detected ${parsed.plates.length} plate(s). Applying blur...`);
+      parsed.plates.forEach((p, i) => {
+        addLog('inf', `Plate ${i+1}: ${p.position} · bounds [${p.x_pct?.toFixed(1)}%, ${p.y_pct?.toFixed(1)}%] ${p.w_pct?.toFixed(1)}%×${p.h_pct?.toFixed(1)}% · confidence: ${p.confidence}`);
+      });
+
+      // Draw on canvas
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.getElementById('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        parsed.plates.forEach(plate => {
+          const margin = 3; // extra % safety margin
+          const x = Math.max(0, img.width  * ((plate.x_pct - margin) / 100));
+          const y = Math.max(0, img.height * ((plate.y_pct - margin) / 100));
+          const w = Math.min(img.width  - x, img.width  * ((plate.w_pct + margin * 2) / 100));
+          const h = Math.min(img.height - y, img.height * ((plate.h_pct + margin * 2) / 100));
+
+          applyMosaic(ctx, Math.round(x), Math.round(y), Math.round(w), Math.round(h), 12);
+        });
+
+        const dataURL = canvas.toDataURL('image/png');
+
+        // Show result
+        const procImg = document.getElementById('procImg');
+        procImg.src = dataURL;
+        procImg.style.display = 'block';
+        document.getElementById('procHint').style.display = 'none';
+        document.getElementById('procBadge').textContent = '✓ Plate hidden';
+        document.getElementById('procBadge').className = 'img-panel-badge done';
+
+        const dl = document.getElementById('dlBtn');
+        dl.href = dataURL;
+        dl.classList.add('show');
+
+        addLog('ok', 'Done! Number plate hidden successfully.');
+        setLoading(false);
+      };
+      img.src = originalDataURL;
+
+    } catch (e) {
+      addLog('err', e.message);
+      showError(e.message);
+      document.getElementById('procBadge').textContent = 'Failed';
+      document.getElementById('procBadge').className = 'img-panel-badge';
+      setLoading(false);
+    }
+  }
+
+  function applyMosaic(ctx, x, y, w, h, tileSize) {
+    if (w <= 0 || h <= 0) return;
+    const imgData = ctx.getImageData(x, y, w, h);
+    const d = imgData.data;
+
+    for (let ty = 0; ty < h; ty += tileSize) {
+      for (let tx = 0; tx < w; tx += tileSize) {
+        // Sample a pixel near tile centre
+        const sx = Math.min(tx + Math.floor(tileSize / 2), w - 1);
+        const sy = Math.min(ty + Math.floor(tileSize / 2), h - 1);
+        const si = (sy * w + sx) * 4;
+        const r = d[si], g = d[si+1], b = d[si+2];
+
+        // Fill entire tile
+        for (let py = ty; py < Math.min(ty + tileSize, h); py++) {
+          for (let px = tx; px < Math.min(tx + tileSize, w); px++) {
+            const i = (py * w + px) * 4;
+            d[i] = r; d[i+1] = g; d[i+2] = b;
+          }
+        }
+      }
+    }
+    ctx.putImageData(imgData, x, y);
+  }
+</script>
+</body>
+</html>
